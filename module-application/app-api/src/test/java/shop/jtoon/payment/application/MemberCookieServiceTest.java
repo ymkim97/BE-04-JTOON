@@ -53,10 +53,10 @@ class MemberCookieServiceTest {
 	@Test
 	void useCookie_NotFoundException_MemberCookie() {
 		// Given
-		given(memberCookieRepository.findByMember(any(Member.class))).willReturn(Optional.empty());
+		given(memberCookieRepository.findByMemberIdWithPessimisticLock(any(Long.class))).willReturn(Optional.empty());
 
 		// When, Then
-		assertThatThrownBy(() -> memberCookieService.useCookie(2, member.getId()))
+		assertThatThrownBy(() -> memberCookieService.useCookie(2, 1L))
 			.isInstanceOf(NotFoundException.class)
 			.hasMessage(ErrorStatus.MEMBER_COOKIE_NOT_FOUND.getMessage());
 	}
@@ -66,10 +66,11 @@ class MemberCookieServiceTest {
 	void useCookie_InvalidRequestException() {
 		// Given
 		MemberCookie memberCookie = MemberCookie.create(0, member);
-		given(memberCookieRepository.findByMember(any(Member.class))).willReturn(Optional.of(memberCookie));
+		given(memberCookieRepository.findByMemberIdWithPessimisticLock(any(Long.class))).willReturn(
+			Optional.of(memberCookie));
 
 		// When, Then
-		assertThatThrownBy(() -> memberCookieService.useCookie(2, member.getId()))
+		assertThatThrownBy(() -> memberCookieService.useCookie(2, 1L))
 			.isInstanceOf(InvalidRequestException.class)
 			.hasMessage(ErrorStatus.EPISODE_NOT_ENOUGH_COOKIES.getMessage());
 	}
@@ -79,10 +80,11 @@ class MemberCookieServiceTest {
 	void useCookie_CookieCount() {
 		// Given
 		MemberCookie memberCookie = MemberCookie.create(7, member);
-		given(memberCookieRepository.findByMember(any(Member.class))).willReturn(Optional.of(memberCookie));
+		given(memberCookieRepository.findByMemberIdWithPessimisticLock(any(Long.class))).willReturn(
+			Optional.of(memberCookie));
 
 		// When
-		int actual = memberCookieService.useCookie(2, member.getId());
+		int actual = memberCookieService.useCookie(2, 1L);
 
 		// Then
 		assertThat(actual).isEqualTo(5);
