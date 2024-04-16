@@ -88,7 +88,7 @@ public class EpisodeService {
 	public void purchaseEpisode(Long memberId, Long episodeId) {
 		Member member = memberService.findById(memberId);
 		Episode episode = getEpisodeById(episodeId);
-		memberCookieService.useCookie(episode.getCookieCount(), member);
+		memberCookieService.useCookie(episode.getCookieCount(), member.getId());
 		PurchasedEpisode purchasedEpisode = PurchasedEpisode.create(member, episode);
 		purchasedEpisodeRepository.save(purchasedEpisode);
 	}
